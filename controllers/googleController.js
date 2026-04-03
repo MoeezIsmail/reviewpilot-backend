@@ -103,7 +103,7 @@ const googleConnectCallback = async (req, res) => {
 
         console.log('Google Business connected!');
         const redirectPage = savedState.from || 'connect-platforms';
-        res.redirect(`${process.env.FRONTEND_URL}/${redirectPage}?google=success`);
+        res.redirect(`${process.env?.FRONTEND_URL}/${redirectPage}?google=success`);
 
     } catch (err) {
         console.log('Full error:', err);
@@ -112,13 +112,13 @@ const googleConnectCallback = async (req, res) => {
         console.log('Response data:', err.response?.data);
         console.log('Response status:', err.response?.status);
         console.log('Google business callback error:', err.response?.data || err.message);
-        res.redirect(`${process.env.FRONTEND_URL}/connect-platforms?error=google_failed`);
+        res.redirect(`${process.env?.FRONTEND_URL}/connect-platforms?error=google_failed`);
     }
 };
 
 const googleLoginRedirect = (req, res) => {
     const url = buildGoogleAuthUrl(
-        process.env.GOOGLE_LOGIN_CALLBACK_URL,
+        process.env?.GOOGLE_LOGIN_CALLBACK_URL,
         'openid profile email'
     );
     res.redirect(url);
@@ -167,12 +167,12 @@ const googleLoginCallback = async (req, res) => {
         const isAnyPlatformConnected = !!(user.platforms?.google?.accessToken);
 
         res.redirect(
-            `${process.env.FRONTEND_URL}/auth/success?token=${token}&isNewUser=${isNewUser}&isAnyPlatformConnected=${isAnyPlatformConnected}`
+            `${process.env?.FRONTEND_URL}/auth/success?token=${token}&isNewUser=${isNewUser}&isAnyPlatformConnected=${isAnyPlatformConnected}`
         );
 
     } catch (err) {
         console.error('Google login callback error:', err.response?.data || err.message);
-        res.redirect(`${process.env.FRONTEND_URL}/auth?error=google_failed`);
+        res.redirect(`${process.env?.FRONTEND_URL}/auth?error=google_failed`);
     }
 };
 
