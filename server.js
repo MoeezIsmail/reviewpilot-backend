@@ -15,7 +15,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env?.PORT || 5000;
 
 // app.use(session({
 //     secret: process.env.SESSION_SECRET,
@@ -24,12 +24,12 @@ const PORT = process.env.PORT || 5000;
 // }));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET || "mysecret321",
+    secret: process.env?.SESSION_SECRET || "mysecret321",
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,       // JS se access nahi hoga
-        secure: process.env.NODE_ENV === 'production',  // HTTPS only in production
+        secure: process.env?.NODE_ENV === 'production',  // HTTPS only in production
         maxAge: 10 * 60 * 1000,  // 10 minutes
     }
 }));
@@ -45,7 +45,7 @@ async function startServer() {
     try {
         await connectDB();
 
-        const PORT = process.env.PORT || 5001;
+        const PORT = process.env?.PORT || 5001;
         app.listen(PORT, '0.0.0.0', () => {
             console.log(`Server running on port ${PORT}`);
         });
