@@ -1,14 +1,15 @@
 require("dotenv").config();
 
 const express = require("express");
-const axios = require("axios");
+const app = express();
+app.set('trust proxy', 1);
+
 const cors = require("cors");
 const { connectDB } = require('./dbConfig/db');
 const authRoutes = require('./routes/authRoutes');
 const reviewRoutes = require('./routes/reviewsRoutes');
 const session = require('express-session');
 
-const app = express();
 app.use(cors({
     origin: process.env?.FRONTEND_URL,
     credentials: true,
@@ -45,7 +46,6 @@ async function startServer() {
     try {
         await connectDB();
 
-        const PORT = process.env?.PORT || 5001;
         app.listen(PORT, '0.0.0.0', () => {
             console.log(`Server running on port ${PORT}`);
         });
