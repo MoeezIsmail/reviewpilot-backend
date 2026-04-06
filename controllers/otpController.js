@@ -14,8 +14,10 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendOTP = async (req, res) => {
+    console.log('send OTP');
     try {
         const { email } = req.body;
+        console.log('email: ', email)
         if (!email) return res.status(400).json({ success: false, message: 'Email required' });
 
         const otp = crypto.randomInt(100000, 999999).toString();
