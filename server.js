@@ -31,6 +31,7 @@ app.use(session({
     cookie: {
         httpOnly: true,       // JS se access nahi hoga
         secure: process.env?.NODE_ENV === 'production',  // HTTPS only in production
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 10 * 60 * 1000,  // 10 minutes
     }
 }));
