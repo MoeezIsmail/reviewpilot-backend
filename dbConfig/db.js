@@ -3,10 +3,7 @@ const { MongoClient } = require('mongodb');
 let db;
 
 async function connectDB() {
-    const client = new MongoClient(process.env.MONGO_URI, {
-        tls: true,
-        tlsAllowInvalidCertificates: true,
-    });
+    const client = new MongoClient(process.env.MONGO_URI);
     await client.connect();
     db = client.db("reviewpilot");
     console.log('MongoDB connected');

@@ -43,7 +43,7 @@ app.use("/api/reviews", reviewRoutes)
 
 async function startServer() {
     try {
-        // await connectDB();
+        await connectDB();
 
         const PORT = process.env?.PORT || 5001;
         app.listen(PORT, '0.0.0.0', () => {
