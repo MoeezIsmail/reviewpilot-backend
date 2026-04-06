@@ -117,6 +117,7 @@ const googleConnectCallback = async (req, res) => {
 };
 
 const googleLoginRedirect = (req, res) => {
+    console.log('LOGIN CALLBACK URL:', process.env.GOOGLE_LOGIN_CALLBACK_URL);
     const url = buildGoogleAuthUrl(
         process.env?.GOOGLE_LOGIN_CALLBACK_URL,
         'openid profile email'
