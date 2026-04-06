@@ -37,6 +37,8 @@ const sendOTP = async (req, res) => {
             `,
         });
 
+        console.log("email generated")
+
         res.json({ success: true, message: 'OTP sent successfully' });
     } catch (err) {
         console.error('Send OTP error:', err);
