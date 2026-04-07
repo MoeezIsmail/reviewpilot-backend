@@ -23,7 +23,7 @@ const transporter = nodemailer.createTransport({
 
 const { MailtrapClient } = require("mailtrap");
 
-const TOKEN = "<YOUR_API_TOKEN>";
+const TOKEN = "60bf2178b342f85835e24d6273afabcb";
 
 const client = new MailtrapClient({
     token: TOKEN,
