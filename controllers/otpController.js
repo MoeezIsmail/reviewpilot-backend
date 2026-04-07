@@ -21,6 +21,24 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+const { MailtrapClient } = require("mailtrap");
+
+const TOKEN = "<YOUR_API_TOKEN>";
+
+const client = new MailtrapClient({
+    token: TOKEN,
+});
+
+const sender = {
+    email: "hello@demomailtrap.co",
+    name: "Mailtrap Test",
+};
+const recipients = [
+    {
+        email: "moeezaliismaiahmad@gmail.com",
+    }
+];
+
 const sendOTP = async (req, res) => {
     try {
         const { email } = req.body;
@@ -29,19 +47,34 @@ const sendOTP = async (req, res) => {
         const otp = crypto.randomInt(100000, 999999).toString();
         otpStore.set(email, { otp, expiresAt: Date.now() + 10 * 60 * 1000 });
 
-        await transporter.sendMail({
-            from: `"ReviewPilot" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: 'Your ReviewPilot OTP',
-            html: `
-                <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto;">
+       await client
+            .send({
+                from: `"ReviewPilot" <${process.env.EMAIL_USER}>`,
+                to: email,
+                subject: "Your ReviewPilot OTP",
+                text: `<div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto;">
                     <h2 style="color: #4f46e5;">ReviewPilot</h2>
                     <p>Your verification code is:</p>
                     <h1 style="letter-spacing: 8px; color: #4f46e5;">${otp}</h1>
                     <p style="color: #888;">This code expires in 10 minutes.</p>
-                </div>
-            `,
-        });
+                </div>`,
+                category: "Integration Test",
+            })
+            .then(console.log, console.error);
+        //
+        // await transporter.sendMail({
+        //     from: ,
+        //     to: email,
+        //     subject: 'Your ReviewPilot OTP',
+        //     html: `
+        //         <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto;">
+        //             <h2 style="color: #4f46e5;">ReviewPilot</h2>
+        //             <p>Your verification code is:</p>
+        //             <h1 style="letter-spacing: 8px; color: #4f46e5;">${otp}</h1>
+        //             <p style="color: #888;">This code expires in 10 minutes.</p>
+        //         </div>
+        //     `,
+        // });
 
         res.json({ success: true, message: 'OTP sent successfully' });
     } catch (err) {
