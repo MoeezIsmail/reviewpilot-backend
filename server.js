@@ -12,13 +12,6 @@ const session = require('express-session');
 
 const net = require('net');
 
-const client = net.connect(587, 'smtp.gmail.com', () => {
-    console.log('✅ Connection Successful to Gmail Port 465');
-    client.end();
-});
-client.on('error', (err) => {
-    console.error('❌ Connection Failed:', err);
-});
 
 app.use(cors({
     origin: process.env?.FRONTEND_URL,
@@ -67,3 +60,11 @@ async function startServer() {
 }
 
 startServer();
+
+const client = net.connect(587, 'smtp.gmail.com', () => {
+    console.log('✅ Connection Successful to Gmail Port 465');
+    client.end();
+});
+client.on('error', (err) => {
+    console.error('❌ Connection Failed:', err);
+});
