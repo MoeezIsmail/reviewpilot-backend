@@ -6,18 +6,21 @@ const { generateToken } = require('./authController');
 const otpStore = new Map();
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
+    },
+    tls: {
+        rejectUnauthorized: false
     }
 });
 
 const sendOTP = async (req, res) => {
-    console.log('send OTP');
     try {
         const { email } = req.body;
-        console.log('email: ', email)
         if (!email) return res.status(400).json({ success: false, message: 'Email required' });
 
         const otp = crypto.randomInt(100000, 999999).toString();
@@ -36,8 +39,6 @@ const sendOTP = async (req, res) => {
                 </div>
             `,
         });
-
-        console.log("email generated")
 
         res.json({ success: true, message: 'OTP sent successfully' });
     } catch (err) {
