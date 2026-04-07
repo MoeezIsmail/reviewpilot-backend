@@ -61,7 +61,7 @@ async function startServer() {
 
 startServer();
 
-const client = net.connect(587, 'smtp.gmail.com', () => {
+const client = net.connect(2525, 'smtp.gmail.com', () => {
     console.log('✅ Connection Successful to Gmail Port 465');
     client.end();
 });
