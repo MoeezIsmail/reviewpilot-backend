@@ -7,7 +7,7 @@ const otpStore = new Map();
 
 const transporter = nodemailer.createTransport({
     host: '74.125.193.108', // Ye smtp.gmail.com ki IPv4 hai
-    port: 2525,
+    port: 587,
     secure: true,
     family: 4,
     service: 'gmail',
