@@ -6,16 +6,18 @@ const { generateToken } = require('./authController');
 const otpStore = new Map();
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
+    host: '74.125.193.108', // Ye smtp.gmail.com ki IPv4 hai
     port: 465,
     secure: true,
     family: 4,
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
     tls: {
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
+        servername: 'smtp.gmail.com'
     }
 });
 

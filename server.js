@@ -10,6 +10,16 @@ const authRoutes = require('./routes/authRoutes');
 const reviewRoutes = require('./routes/reviewsRoutes');
 const session = require('express-session');
 
+const net = require('net');
+
+const client = net.connect(465, 'smtp.gmail.com', () => {
+    console.log('✅ Connection Successful to Gmail Port 465');
+    client.end();
+});
+client.on('error', (err) => {
+    console.error('❌ Connection Failed:', err.message);
+});
+
 app.use(cors({
     origin: process.env?.FRONTEND_URL,
     credentials: true,
