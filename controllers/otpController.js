@@ -1,7 +1,7 @@
 // const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const User = require('../models/User');
-const { generateToken } = require('./authController');
+const {generateToken} = require('./authController');
 
 const otpStore = new Map();
 
@@ -21,7 +21,7 @@ const otpStore = new Map();
 //     }
 // });
 
-const { MailtrapClient } = require("mailtrap");
+const {MailtrapClient} = require("mailtrap");
 
 const TOKEN = "60bf2178b342f85835e24d6273afabcb";
 
@@ -41,27 +41,37 @@ const recipients = [
 
 const sendOTP = async (req, res) => {
     try {
-        const { email } = req.body;
-        if (!email) return res.status(400).json({ success: false, message: 'Email required' });
+        const {email} = req.body;
+        if (!email) return res.status(400).json({success: false, message: 'Email required'});
 
         const otp = crypto.randomInt(100000, 999999).toString();
-        otpStore.set(email, { otp, expiresAt: Date.now() + 10 * 60 * 1000 });
+        otpStore.set(email, {otp, expiresAt: Date.now() + 10 * 60 * 1000});
 
-       await client
+        await client
             .send({
-                from: `"ReviewPilot" <${process.env.EMAIL_USER}>`,
-                to: email,
+                from: {
+                    email: process.env.EMAIL_USER,
+                    name: "ReviewPIlot"
+                },
+                to: [
+                    {
+                        email: email // User ka email jo request body se aa raha hai
+                    }
+                ],
                 subject: "Your ReviewPilot OTP",
-                text: `<div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto;">
-                    <h2 style="color: #4f46e5;">ReviewPilot</h2>
-                    <p>Your verification code is:</p>
-                    <h1 style="letter-spacing: 8px; color: #4f46e5;">${otp}</h1>
-                    <p style="color: #888;">This code expires in 10 minutes.</p>
-                </div>`,
+                html: `
+    <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto;">
+        <h2 style="color: #4f46e5;">ReviewPilot</h2>
+        <p>Your verification code is:</p>
+        <h1 style="letter-spacing: 8px; color: #4f46e5;">${otp}</h1>
+        <p style="color: #888;">This code expires in 10 minutes.</p>
+    </div>
+  `,
                 category: "Integration Test",
             })
             .then(console.log, console.error);
-        //
+
+
         // await transporter.sendMail({
         //     from: ,
         //     to: email,
@@ -76,25 +86,25 @@ const sendOTP = async (req, res) => {
         //     `,
         // });
 
-        res.json({ success: true, message: 'OTP sent successfully' });
+        res.json({success: true, message: 'OTP sent successfully'});
     } catch (err) {
         console.error('Send OTP error:', err);
-        res.status(500).json({ success: false, message: 'Failed to send OTP' });
+        res.status(500).json({success: false, message: 'Failed to send OTP'});
     }
 };
 
 const verifyOTP = async (req, res) => {
     try {
-        const { email, otp } = req.body;
-        if (!email || !otp) return res.status(400).json({ success: false, message: 'Email and OTP required' });
+        const {email, otp} = req.body;
+        if (!email || !otp) return res.status(400).json({success: false, message: 'Email and OTP required'});
 
         const stored = otpStore.get(email);
-        if (!stored) return res.status(400).json({ success: false, message: 'OTP not found. Request a new one.' });
+        if (!stored) return res.status(400).json({success: false, message: 'OTP not found. Request a new one.'});
         if (Date.now() > stored.expiresAt) {
             otpStore.delete(email);
-            return res.status(400).json({ success: false, message: 'OTP expired. Request a new one.' });
+            return res.status(400).json({success: false, message: 'OTP expired. Request a new one.'});
         }
-        if (stored.otp !== otp) return res.status(400).json({ success: false, message: 'Invalid OTP' });
+        if (stored.otp !== otp) return res.status(400).json({success: false, message: 'Invalid OTP'});
 
         otpStore.delete(email);
 
@@ -105,10 +115,10 @@ const verifyOTP = async (req, res) => {
             const result = await User.createUser({
                 email,
                 isEmailVerified: true,
-                platforms: { google: null, yelp: null },
+                platforms: {google: null, yelp: null},
                 createdAt: new Date(),
             });
-            user = { _id: result.insertedId, email };
+            user = {_id: result.insertedId, email};
             isNewUser = true;
         }
 
@@ -116,11 +126,11 @@ const verifyOTP = async (req, res) => {
         const isAnyPlatformConnected = !!(user.platforms?.google?.accessToken) ||
             !!(user.platforms?.yelp?.accessToken);
 
-        res.json({ success: true, token, isNewUser, isAnyPlatformConnected });
+        res.json({success: true, token, isNewUser, isAnyPlatformConnected});
     } catch (err) {
         console.error('Verify OTP error:', err);
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({success: false, message: 'Server error'});
     }
 };
 
-module.exports = { sendOTP, verifyOTP };
+module.exports = {sendOTP, verifyOTP};
