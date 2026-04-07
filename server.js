@@ -17,7 +17,7 @@ const client = net.connect(465, 'smtp.gmail.com', () => {
     client.end();
 });
 client.on('error', (err) => {
-    console.error('❌ Connection Failed:', err.message);
+    console.error('❌ Connection Failed:', err);
 });
 
 app.use(cors({
