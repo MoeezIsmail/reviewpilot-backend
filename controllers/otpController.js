@@ -2,13 +2,16 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const User = require('../models/User');
 const { generateToken } = require('./authController');
+const sgMail = require('@sendgrid/mail');
 
 const otpStore = new Map();
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
-    secure: false,
+    secure: true,
     family: 4,
     auth: {
         user: process.env.EMAIL_USER,
