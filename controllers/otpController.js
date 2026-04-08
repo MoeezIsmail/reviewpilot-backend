@@ -50,8 +50,8 @@ const sendOTP = async (req, res) => {
         await client
             .send({
                 from: {
-                    email: process.env.EMAIL_USER,
-                    name: "ReviewPIlot"
+                    email:  'hello@demomailtrap.co',
+                    name: "Mailtrap Test"
                 },
                 to: [
                     {
