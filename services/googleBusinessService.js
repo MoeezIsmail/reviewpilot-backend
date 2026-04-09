@@ -4,11 +4,10 @@ const BASE_URL = 'https://mybusinessaccountmanagement.googleapis.com/v1';
 const REVIEWS_BASE_URL = 'https://mybusiness.googleapis.com/v4';
 
 const getAccounts = async (accessToken) => {
-    console.log("gloo")
     const res = await axios.get(`${BASE_URL}/accounts`, {
         headers: { Authorization: `Bearer ${accessToken}` }
     });
-    console.log('error: ', res);
+
     return res.data.accounts || [];
 };
 

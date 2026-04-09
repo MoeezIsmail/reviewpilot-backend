@@ -41,27 +41,30 @@ const getReviewsData = async (req, res) => {
 
         // Accounts fetch karo
         const accounts = await getAccounts(accessToken);
-        console.log('accounts: ', accounts);
+        console.log('accounts: ', accounts[0]);
+
         if (!accounts.length) {
             return res.status(404).json({ message: "No Google Business accounts found" });
         }
 
-        // const accountId = accounts[0].name;   // e.g. "accounts/123456"
-        //
-        // // Locations fetch karo
-        // const locations = await getLocations(accountId, accessToken);
-        // if (!locations.length) {
-        //     return res.status(404).json({ message: "No locations found" });
-        // }
-        //
-        // const locationId = locations[0].name;  // e.g. "locations/123456"
-        //
-        // // Reviews fetch karo
-        // const pageToken = req.query.nextPageToken || null;
-        // const { reviews, nextPageToken } = await getReviews(accountId, locationId, accessToken, pageToken);
+        const accountId = accounts[0].name;   // e.g. "accounts/123456"
+
+        // Locations fetch karo
+        const locations = await getLocations(accountId, accessToken);
+        if (!locations.length) {
+            return res.status(404).json({ message: "No locations found" });
+        }
+
+        const locationId = locations[0].name;  // e.g. "locations/123456"
+
+        // Reviews fetch karo
+        const pageToken = req.query.nextPageToken || null;
+        const { reviews, nextPageToken } = await getReviews(accountId, locationId, accessToken, pageToken);
+
+        console.log('Reviews: ', reviews);
 
         // accountId aur locationId bhi bhejo — reply ke liye zaroorat hogi
-        res.json({ accounts });
+        res.json({ accounts,  });
 
     } catch (err) {
         console.error('getReviewsData error:', err.response?.data || err.message);
