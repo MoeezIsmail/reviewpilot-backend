@@ -91,6 +91,7 @@ const googleConnectCallback = async (req, res) => {
         }
 
         try {
+            console.log('profile id: ', profile.id);
             const locationRes = await getLocations(profile.id, access_token);
 
             console.log('location: ', locationRes);

@@ -12,6 +12,7 @@ const getAccounts = async (accessToken) => {
 };
 
 const getLocations = async (accountId, accessToken) => {
+    console.log('account ID: ', accountId);
     const res = await axios.get(
         `https://mybusinessbusinessinformation.googleapis.com/v1/${accountId}/locations`,
         {
