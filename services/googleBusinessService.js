@@ -37,7 +37,7 @@ const getReviews = async (accountId, locationId, accessToken, pageToken = null) 
     if (pageToken) params.pageToken = pageToken;
 
     const res = await axios.get(
-        `https://mybusiness.googleapis.com/v4/accounts/${accountId}/locations/${locationId}/reviews`,
+        `https://mybusiness.googleapis.com/v4/${accountId}/${locationId}/reviews`,
         {
             headers: { Authorization: `Bearer ${accessToken}` },
             params,
