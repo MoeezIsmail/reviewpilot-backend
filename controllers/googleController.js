@@ -77,9 +77,9 @@ const googleConnectCallback = async (req, res) => {
         try {
             const accountsRes = await getAccounts(access_token);
 
-            const accounts = accountsRes.data.accounts || [];
+            // const accounts = accountsRes?.data?.accounts || [];
 
-            if (!accounts.length) {
+            if (!accountsRes.length) {
                 // Koi business nahi — error bhejo
                 return res.redirect(
                     `${process.env.FRONTEND_URL}/connect-platforms?error=no_business`

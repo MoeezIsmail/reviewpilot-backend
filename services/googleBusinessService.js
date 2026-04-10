@@ -8,6 +8,8 @@ const getAccounts = async (accessToken) => {
         headers: { Authorization: `Bearer ${accessToken}` }
     });
 
+    console.log('Service Accounts res: ', res.data);
+
     return res.data.accounts || [];
 };
 
