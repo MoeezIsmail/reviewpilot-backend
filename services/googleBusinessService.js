@@ -11,21 +11,6 @@ const getAccounts = async (accessToken) => {
     return res.data.accounts || [];
 };
 
-// const getLocations = async (accountId, accessToken) => {
-//     console.log('account ID: ', accountId);
-//     const res = await axios.get(
-//         `https://mybusinessbusinessinformation.googleapis.com/v1/${accountId}/locations`,
-//         {
-//             headers: { Authorization: `Bearer ${accessToken}` },
-//             params: { readMask: 'name,title,storefrontAddress' }
-//         }
-//     );
-//
-//     console.log('Service location: ', res.data);
-//
-//     return res.data.locations || [];
-// };
-
 const getLocations = async (accountId, accessToken) => {
     try {
         console.log('account ID: ', accountId);
@@ -50,11 +35,9 @@ const getLocations = async (accountId, accessToken) => {
 const getReviews = async (accountId, locationId, accessToken, pageToken = null) => {
     const params = { pageSize: 10 };
     if (pageToken) params.pageToken = pageToken;
-    console.log('account ID:', accountId);
-    console.log('location ID:', locationId);
 
     const res = await axios.get(
-        `${REVIEWS_BASE_URL}/accounts/${accountId}/locations/${locationId}/reviews`,
+        `https://mybusiness.googleapis.com/v4/accounts/${accountId}/locations/${locationId}/reviews`,
         {
             headers: { Authorization: `Bearer ${accessToken}` },
             params,
