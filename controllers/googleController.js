@@ -3,7 +3,7 @@ const User = require('../models/User');
 const { generateToken } = require('./authController');
 const { exchangeCodeForTokens, fetchGoogleProfile, buildGoogleAuthUrl } = require('../services/googleService');
 const crypto = require('crypto');
-const {getAccounts} = require("../services/googleBusinessService");
+const {getAccounts, getLocations} = require("../services/googleBusinessService");
 
 const googleConnectRedirect = (req, res) => {
     // Token URL se nahi — session se lo
@@ -43,50 +43,71 @@ const googleConnectCallback = async (req, res) => {
     }
 
     try {
-        // Extract CSRF token from the state
+        // State se csrfToken nikalo
         const { csrfToken } = JSON.parse(Buffer.from(state, 'base64').toString());
+
+        // Session se savedState lo
         const savedState = req.session.oauthState;
 
-        // CSRF verification
+        // CSRF verify karo
         if (!savedState || savedState.csrfToken !== csrfToken) {
             console.log('CSRF mismatch!');
             return res.redirect(`${process.env.FRONTEND_URL}/connect-platforms?error=invalid_state`);
         }
 
-        // Expiry check
+        // Expiry check karo
         if (Date.now() > savedState.expiresAt) {
             req.session.oauthState = null;
             return res.redirect(`${process.env.FRONTEND_URL}/connect-platforms?error=state_expired`);
         }
 
+        // UserId session se lo — URL se nahi ✅
         const userId = savedState.userId;
-        req.session.oauthState = null; // Clear session state
 
-        // Exchange code for tokens
-        const { access_token, refresh_token } = await exchangeCodeForTokens(code, process.env.GOOGLE_CALLBACK_URL);
+        // Use ke baad delete karo
+        req.session.oauthState = null;
+
+        // Tokens exchange karo
+        const { access_token, refresh_token } = await exchangeCodeForTokens(
+            code,
+            process.env.GOOGLE_CALLBACK_URL
+        );
         const profile = await fetchGoogleProfile(access_token);
 
-        // Fetch accounts associated with the Google My Business API
-        const accountsRes = await getAccounts(access_token);
+        try {
+            const accountsRes = await getAccounts(access_token);
 
-        // Ensure the user selects an account ID from the available accounts
-        const selectedAccountId = req.body.selectedAccountId;  // Assuming the user selects the account via a form or UI
+            if (accountsRes.length === 0) {
+                return res.redirect(
+                    `${process.env.FRONTEND_URL}/connect-platforms?error=no_business`
+                );
+            }
 
-        // Find the selected account from the accounts list
-        const selectedAccount = accountsRes.find(account => account.name === selectedAccountId);
-
-        if (!selectedAccount) {
-            return res.redirect(`${process.env.FRONTEND_URL}/connect-platforms?error=no_business`);
+        } catch (businessErr) {
+            console.log('Business Connection Error:', businessErr.response);
+            return res.redirect(
+                `${process.env.FRONTEND_URL}/connect-platforms?error=business_error`
+            );
         }
 
-        // Fetch the locations (businesses) for the selected account
-        const locations = await getLocations(selectedAccount.name, access_token);
+        try {
+            const locationRes = await getLocations(profile.id, access_token);
 
-        if (!locations || locations.length === 0) {
-            return res.redirect(`${process.env.FRONTEND_URL}/connect-platforms?error=no_business`);
+            console.log('location: ', locationRes);
+
+            if (locationRes.length === 0) {
+                return res.redirect(
+                    `${process.env.FRONTEND_URL}/connect-platforms?error=no_business`
+                );
+            }
+
+        } catch (businessErr) {
+            console.log('Location Business Connection Error:', businessErr.response);
+            return res.redirect(
+                `${process.env.FRONTEND_URL}/connect-platforms?error=business_error`
+            );
         }
 
-        // If business is found, connect the Google account to the user's profile
         await User.connectGoogle(userId, {
             googleId: profile.id,
             accessToken: access_token,
@@ -97,13 +118,16 @@ const googleConnectCallback = async (req, res) => {
 
         console.log('Google Business connected!');
         const redirectPage = savedState.from || 'connect-platforms';
-        res.redirect(`${process.env.FRONTEND_URL}/${redirectPage}?google=success`);
+        res.redirect(`${process.env?.FRONTEND_URL}/${redirectPage}?google=success`);
 
     } catch (err) {
         console.log('Full error:', err);
         console.log('Error message:', err.message);
+        console.log('Error code:', err.code);
+        console.log('Response data:', err.response?.data);
+        console.log('Response status:', err.response?.status);
         console.log('Google business callback error:', err.response?.data || err.message);
-        res.redirect(`${process.env.FRONTEND_URL}/connect-platforms?error=google_failed`);
+        res.redirect(`${process.env?.FRONTEND_URL}/connect-platforms?error=google_failed`);
     }
 };
 
