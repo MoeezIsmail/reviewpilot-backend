@@ -91,14 +91,14 @@ const googleConnectCallback = async (req, res) => {
         }
 
         try {
-            console.log('profile id: ', profile.id);
-            const locationRes = await getLocations(profile.id, access_token);
+            console.log('account id: ', accountsRes[0]?.name);
+            const locationRes = await getLocations(accountsRes[0]?.name, access_token);
 
             console.log('location: ', locationRes);
 
             if (locationRes.length === 0) {
                 return res.redirect(
-                    `${process.env.FRONTEND_URL}/connect-platforms?error=no_business`
+                    `${process.env.FRONTEND_URL}/connect-platforms?error=no_location`
                 );
             }
 
