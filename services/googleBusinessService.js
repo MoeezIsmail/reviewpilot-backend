@@ -8,8 +8,6 @@ const getAccounts = async (accessToken) => {
         headers: { Authorization: `Bearer ${accessToken}` }
     });
 
-    console.log('Service Accounts res: ', res.data);
-
     return res.data.accounts || [];
 };
 
@@ -21,6 +19,9 @@ const getLocations = async (accountId, accessToken) => {
             params: { readMask: 'name,title,storefrontAddress' }
         }
     );
+
+    console.log('Service location: ', res.data);
+
     return res.data.locations || [];
 };
 
