@@ -54,7 +54,7 @@ const getReviews = async (accountId, locationId, accessToken, pageToken = null) 
     console.log('location ID:', locationId);
 
     const res = await axios.get(
-        `${REVIEWS_BASE_URL}/${accountId}/${locationId}/reviews`,
+        `${REVIEWS_BASE_URL}/accounts/${accountId}/locations/${locationId}/reviews`,
         {
             headers: { Authorization: `Bearer ${accessToken}` },
             params,
