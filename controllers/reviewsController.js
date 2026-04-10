@@ -10,16 +10,19 @@ const {
 
 // ─── Helper: Valid Token Get Karo ────────────────────────────
 const getValidAccessToken = async (user) => {
-    // Pehle existing token try karo
+    const accessToken = user.platforms.google.accessToken;
+    const refreshToken = user.platforms.google.refreshToken;
+
     try {
-        const accounts = await getAccounts(user.platforms.google.accessToken);
-        if (accounts) return user.platforms.google.accessToken;
+        await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        return accessToken;
     } catch (err) {
-        // Token expire — refresh karo
         if (err.response?.status === 401) {
             console.log('Token expired, refreshing...');
-            const newToken = await refreshAccessToken(user.platforms.google.refreshToken);
-            await User.updateGoogleTokens(user._id, newToken, user.platforms.google.refreshToken);
+            const newToken = await refreshAccessToken(refreshToken);
+            await User.updateGoogleTokens(user._id, newToken, refreshToken);
             return newToken;
         }
         throw err;
@@ -40,23 +43,13 @@ const getReviewsData = async (req, res) => {
 
         const accessToken = await getValidAccessToken(user);
 
-        // Accounts fetch karo
-        const accounts = await getAccounts(accessToken);
-        console.log('accounts: ', accounts[0]);
+        const accountId = user.platforms.google.accountId;
 
-        if (!accounts.length) {
-            return res.status(404).json({ message: "No Google Business accounts found" });
+        const locationId = user.platforms.google.locationId;
+
+        if (!accountId || !locationId) {
+            return res.status(400).json({ message: "Business location not found. Please reconnect Google." });
         }
-
-        const accountId = accounts[0].name;   // e.g. "accounts/123456"
-
-        // Locations fetch karo
-        const locations = await getLocations(accountId, accessToken);
-        if (!locations.length) {
-            return res.status(404).json({ message: "No locations found" });
-        }
-
-        const locationId = locations[0].name;  // e.g. "locations/123456"
 
         // Reviews fetch karo
         const pageToken = req.query.nextPageToken || null;
@@ -65,7 +58,7 @@ const getReviewsData = async (req, res) => {
         console.log('Reviews: ', reviews);
 
         // accountId aur locationId bhi bhejo — reply ke liye zaroorat hogi
-        res.json({ accounts });
+        res.json({ reviews, nextPageToken, accountId, locationId });
 
     } catch (err) {
         console.error('getReviewsData error:', err.response?.data || err.message);

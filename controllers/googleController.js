@@ -83,11 +83,9 @@ const googleConnectCallback = async (req, res) => {
             );
         }
 
-        console.log('account id: ', accountsRes[0]?.name);
+        const accountId = accountsRes[0]?.name;
 
-        const locationRes = await getLocations(accountsRes[0]?.name, access_token);
-
-        console.log('location: ', locationRes);
+        const locationRes = await getLocations(accountId, access_token);
 
         if (locationRes.length === 0) {
             return res.redirect(
@@ -95,10 +93,14 @@ const googleConnectCallback = async (req, res) => {
             );
         }
 
+        const locationId = locationRes[0]?.name;
+
         await User.connectGoogle(userId, {
             googleId: profile.id,
             accessToken: access_token,
             refreshToken: refresh_token,
+            accountId: accountId,
+            locationId: locationId,
             googleName: profile.name,
             googleEmail: profile.email,
         });

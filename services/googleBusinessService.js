@@ -50,6 +50,8 @@ const getLocations = async (accountId, accessToken) => {
 const getReviews = async (accountId, locationId, accessToken, pageToken = null) => {
     const params = { pageSize: 10 };
     if (pageToken) params.pageToken = pageToken;
+    console.log('account ID:', accountId);
+    console.log('location ID:', locationId);
 
     const res = await axios.get(
         `${REVIEWS_BASE_URL}/${accountId}/${locationId}/reviews`,

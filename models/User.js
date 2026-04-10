@@ -32,7 +32,7 @@ async function updateGoogleTokens(userId, accessToken, refreshToken) {
     );
 }
 
-async function connectGoogle(userId, { googleId, accessToken, refreshToken, googleName, googleEmail }) {
+async function connectGoogle(userId, { googleId, accessToken, refreshToken, googleName, googleEmail, accountId, locationId }) {
     const db = getDB();
     return db.collection(COLLECTION).updateOne(
         { _id: new ObjectId(userId) },
@@ -42,6 +42,8 @@ async function connectGoogle(userId, { googleId, accessToken, refreshToken, goog
                 'platforms.google': {
                     accessToken,
                     refreshToken,
+                    accountId,
+                    locationId,
                     googleName,
                     googleEmail,
                     connectedAt: new Date(),
