@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { generateToken } = require('./authController');
-const { exchangeCodeForTokens, fetchGoogleProfile, buildGoogleAuthUrl } = require('../services/googleService');
+const {generateToken} = require('./authController');
+const {exchangeCodeForTokens, fetchGoogleProfile, buildGoogleAuthUrl} = require('../services/googleService');
 const crypto = require('crypto');
 const {getAccounts, getLocations} = require("../services/googleBusinessService");
 
@@ -23,7 +23,7 @@ const googleConnectRedirect = (req, res) => {
     };
     req.session.pendingUserId = null;  // Clear karo
 
-    const state = Buffer.from(JSON.stringify({ csrfToken })).toString('base64');
+    const state = Buffer.from(JSON.stringify({csrfToken})).toString('base64');
 
     const url = buildGoogleAuthUrl(
         process.env.GOOGLE_CALLBACK_URL,
@@ -36,7 +36,7 @@ const googleConnectRedirect = (req, res) => {
 };
 
 const googleConnectCallback = async (req, res) => {
-    const { code, state, error } = req.query;
+    const {code, state, error} = req.query;
 
     if (error || !state || !code) {
         return res.redirect(`${process.env.FRONTEND_URL}/connect-platforms?error=google_failed`);
@@ -44,7 +44,7 @@ const googleConnectCallback = async (req, res) => {
 
     try {
         // State se csrfToken nikalo
-        const { csrfToken } = JSON.parse(Buffer.from(state, 'base64').toString());
+        const {csrfToken} = JSON.parse(Buffer.from(state, 'base64').toString());
 
         // Session se savedState lo
         const savedState = req.session.oauthState;
@@ -68,44 +68,30 @@ const googleConnectCallback = async (req, res) => {
         req.session.oauthState = null;
 
         // Tokens exchange karo
-        const { access_token, refresh_token } = await exchangeCodeForTokens(
+        const {access_token, refresh_token} = await exchangeCodeForTokens(
             code,
             process.env.GOOGLE_CALLBACK_URL
         );
         const profile = await fetchGoogleProfile(access_token);
 
-        try {
-            const accountsRes = await getAccounts(access_token);
 
-            if (accountsRes.length === 0) {
-                return res.redirect(
-                    `${process.env.FRONTEND_URL}/connect-platforms?error=no_business`
-                );
-            }
+        const accountsRes = await getAccounts(access_token);
 
-        } catch (businessErr) {
-            console.log('Business Connection Error:', businessErr.response);
+        if (accountsRes.length === 0) {
             return res.redirect(
-                `${process.env.FRONTEND_URL}/connect-platforms?error=business_error`
+                `${process.env.FRONTEND_URL}/connect-platforms?error=no_business`
             );
         }
 
-        try {
-            console.log('account id: ', accountsRes[0]?.name);
-            const locationRes = await getLocations(accountsRes[0]?.name, access_token);
+        console.log('account id: ', accountsRes[0]?.name);
 
-            console.log('location: ', locationRes);
+        const locationRes = await getLocations(accountsRes[0]?.name, access_token);
 
-            if (locationRes.length === 0) {
-                return res.redirect(
-                    `${process.env.FRONTEND_URL}/connect-platforms?error=no_location`
-                );
-            }
+        console.log('location: ', locationRes);
 
-        } catch (businessErr) {
-            console.log('Location Business Connection Error:', businessErr.response);
+        if (locationRes.length === 0) {
             return res.redirect(
-                `${process.env.FRONTEND_URL}/connect-platforms?error=business_error`
+                `${process.env.FRONTEND_URL}/connect-platforms?error=no_location`
             );
         }
 
@@ -141,7 +127,7 @@ const googleLoginRedirect = (req, res) => {
 };
 
 const googleLoginCallback = async (req, res) => {
-    const { code, error } = req.query;
+    const {code, error} = req.query;
 
     if (error || !code) {
         return res.redirect(`${process.env.FRONTEND_URL}/auth?error=google_failed`);
@@ -149,8 +135,8 @@ const googleLoginCallback = async (req, res) => {
 
     try {
         const tokenData = await exchangeCodeForTokens(code, process.env.GOOGLE_LOGIN_CALLBACK_URL);
-        const { access_token, refresh_token } = tokenData;
-        const { id: googleId, email, name } = await fetchGoogleProfile(access_token);
+        const {access_token, refresh_token} = tokenData;
+        const {id: googleId, email, name} = await fetchGoogleProfile(access_token);
 
         let user = await User.findUserByGoogleId(googleId);
         let isNewUser = false;
@@ -171,10 +157,10 @@ const googleLoginCallback = async (req, res) => {
                     email,
                     googleId,
                     isEmailVerified: true,
-                    platforms: { google: null, yelp: null },
+                    platforms: {google: null, yelp: null},
                     createdAt: new Date(),
                 });
-                user = { _id: result.insertedId, email, name };
+                user = {_id: result.insertedId, email, name};
                 isNewUser = true;
             }
         }
