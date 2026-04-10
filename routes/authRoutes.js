@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const verifyToken = require('../middleware/authMiddleware');
 const { getProfile, saveBusinessInfo, getConnectionStatus} = require('../controllers/authController');
-const { sendOTP, verifyOTP } = require('../controllers/otpController');
+const { verifyOTP } = require('../controllers/otpController');
 const {
     googleConnectRedirect,
     googleConnectCallback,
