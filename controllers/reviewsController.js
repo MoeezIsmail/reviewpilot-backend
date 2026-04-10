@@ -64,7 +64,7 @@ const getReviewsData = async (req, res) => {
         console.log('Reviews: ', reviews);
 
         // accountId aur locationId bhi bhejo — reply ke liye zaroorat hogi
-        res.json({ accounts,  });
+        res.json({ accounts });
 
     } catch (err) {
         console.error('getReviewsData error:', err.response?.data || err.message);
