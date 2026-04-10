@@ -11,19 +11,40 @@ const getAccounts = async (accessToken) => {
     return res.data.accounts || [];
 };
 
+// const getLocations = async (accountId, accessToken) => {
+//     console.log('account ID: ', accountId);
+//     const res = await axios.get(
+//         `https://mybusinessbusinessinformation.googleapis.com/v1/${accountId}/locations`,
+//         {
+//             headers: { Authorization: `Bearer ${accessToken}` },
+//             params: { readMask: 'name,title,storefrontAddress' }
+//         }
+//     );
+//
+//     console.log('Service location: ', res.data);
+//
+//     return res.data.locations || [];
+// };
+
 const getLocations = async (accountId, accessToken) => {
-    console.log('account ID: ', accountId);
-    const res = await axios.get(
-        `https://mybusinessbusinessinformation.googleapis.com/v1/${accountId}/locations`,
-        {
-            headers: { Authorization: `Bearer ${accessToken}` },
-            params: { readMask: 'name,title,storefrontAddress' }
-        }
-    );
+    try {
+        console.log('account ID: ', accountId);
 
-    console.log('Service location: ', res.data);
+        const res = await axios.get(
+            `https://mybusinessbusinessinformation.googleapis.com/v1/${accountId}/locations`,
+            {
+                headers: { Authorization: `Bearer ${accessToken}` },
+                params: { readMask: 'name,title,storefrontAddress' }
+            }
+        );
 
-    return res.data.locations || [];
+        console.log('Service location: ', res.data);
+
+        return res.data.locations || [];
+    } catch (error) {
+        console.error('Error fetching locations:', error.response?.data || error.message);
+        throw new Error('Failed to fetch locations');
+    }
 };
 
 const getReviews = async (accountId, locationId, accessToken, pageToken = null) => {
