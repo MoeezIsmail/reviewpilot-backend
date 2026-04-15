@@ -48,6 +48,8 @@ const saveBusinessInfo = async (req, res) => {
 
         await User.updateBusinessInfo(req.user.userId, updateData);
 
+        console.log('Business Info saved');
+
         res.json({ success: true, message: 'Business info saved' });
 
     } catch (err) {

@@ -65,6 +65,6 @@ startServer();
 //     console.log('✅ Connection Successful to Gmail Port 465');
 //     client.end();
 // });
-client.on('error', (err) => {
-    console.error('❌ Connection Failed:', err);
-});
+// client.on('error', (err) => {
+//     console.error('❌ Connection Failed:', err);
+// });
