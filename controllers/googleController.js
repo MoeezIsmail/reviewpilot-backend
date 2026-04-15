@@ -222,6 +222,8 @@ const googleLoginCallback = async (req, res) => {
             user = await User.findUserById(user._id);
         }
 
+        console.log(isNewUser);
+
         const token = generateToken(user);
 
         // ← Proper check
