@@ -128,8 +128,60 @@ const googleLoginRedirect = (req, res) => {
     res.redirect(url);
 };
 
+// const googleLoginCallback = async (req, res) => {
+//     const {code, error} = req.query;
+//
+//     if (error || !code) {
+//         return res.redirect(`${process.env.FRONTEND_URL}/auth?error=google_failed`);
+//     }
+//
+//     try {
+//         const tokenData = await exchangeCodeForTokens(code, process.env.GOOGLE_LOGIN_CALLBACK_URL);
+//         const {access_token, refresh_token} = tokenData;
+//         const {id: googleId, email, name} = await fetchGoogleProfile(access_token);
+//
+//         let user = await User.findUserByGoogleId(googleId);
+//         let isNewUser = false;
+//
+//         if (!user) {
+//             user = await User.findUserByEmail(email);
+//             if (user) {
+//                 await User.connectGoogle(user._id, {
+//                     googleId,
+//                     accessToken: access_token,
+//                     refreshToken: refresh_token,
+//                 });
+//                 // Updated user fetch karo
+//                 user = await User.findUserById(user._id);
+//             } else {
+//                 const result = await User.createUser({
+//                     name,
+//                     email,
+//                     googleId,
+//                     isEmailVerified: true,
+//                     platforms: {google: null, yelp: null},
+//                     createdAt: new Date(),
+//                 });
+//                 user = {_id: result.insertedId, email, name};
+//                 isNewUser = true;
+//             }
+//         }
+//
+//         const token = generateToken(user);
+//         const isAnyPlatformConnected = !!(user.platforms?.google?.accessToken);
+//
+//         res.redirect(
+//             `${process.env?.FRONTEND_URL}/auth/success?token=${token}&isNewUser=${isNewUser}&isAnyPlatformConnected=${isAnyPlatformConnected}`
+//         );
+//
+//     } catch (err) {
+//         console.error('Google login callback error:', err.response?.data || err.message);
+//         res.redirect(`${process.env?.FRONTEND_URL}/auth?error=google_failed`);
+//     }
+// };
+
 const googleLoginCallback = async (req, res) => {
-    const {code, error} = req.query;
+    const { code, error } = req.query;
 
     if (error || !code) {
         return res.redirect(`${process.env.FRONTEND_URL}/auth?error=google_failed`);
@@ -137,8 +189,8 @@ const googleLoginCallback = async (req, res) => {
 
     try {
         const tokenData = await exchangeCodeForTokens(code, process.env.GOOGLE_LOGIN_CALLBACK_URL);
-        const {access_token, refresh_token} = tokenData;
-        const {id: googleId, email, name} = await fetchGoogleProfile(access_token);
+        const { access_token, refresh_token } = tokenData;
+        const { id: googleId, email, name } = await fetchGoogleProfile(access_token);
 
         let user = await User.findUserByGoogleId(googleId);
         let isNewUser = false;
@@ -151,7 +203,7 @@ const googleLoginCallback = async (req, res) => {
                     accessToken: access_token,
                     refreshToken: refresh_token,
                 });
-                // Updated user fetch karo
+                // ← Updated user fetch karo
                 user = await User.findUserById(user._id);
             } else {
                 const result = await User.createUser({
@@ -159,24 +211,30 @@ const googleLoginCallback = async (req, res) => {
                     email,
                     googleId,
                     isEmailVerified: true,
-                    platforms: {google: null, yelp: null},
+                    platforms: { google: null, yelp: null },
                     createdAt: new Date(),
                 });
-                user = {_id: result.insertedId, email, name};
+                user = { _id: result.insertedId, email, name };
                 isNewUser = true;
             }
+        } else {
+            // ← Existing Google user — fresh fetch karo
+            user = await User.findUserById(user._id);
         }
 
         const token = generateToken(user);
-        const isAnyPlatformConnected = !!(user.platforms?.google?.accessToken);
+
+        // ← Proper check
+        const isAnyPlatformConnected = !!(user.platforms?.google?.accessToken) ||
+            !!(user.platforms?.yelp?.accessToken);
 
         res.redirect(
-            `${process.env?.FRONTEND_URL}/auth/success?token=${token}&isNewUser=${isNewUser}&isAnyPlatformConnected=${isAnyPlatformConnected}`
+            `${process.env.FRONTEND_URL}/auth/success?token=${token}&isNewUser=${isNewUser}&isAnyPlatformConnected=${isAnyPlatformConnected}`
         );
 
     } catch (err) {
         console.error('Google login callback error:', err.response?.data || err.message);
-        res.redirect(`${process.env?.FRONTEND_URL}/auth?error=google_failed`);
+        res.redirect(`${process.env.FRONTEND_URL}/auth?error=google_failed`);
     }
 };
 
