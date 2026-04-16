@@ -38,8 +38,8 @@ async function connectGoogle(userId, { googleId, accessToken, refreshToken, goog
         { _id: new ObjectId(userId) },
         {
             $set: {
-                googleId,
                 'platforms.google': {
+                    googleId,
                     accessToken,
                     refreshToken,
                     accountId,
