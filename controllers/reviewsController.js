@@ -46,7 +46,12 @@ const getReviewsData = async (req, res) => {
 
         const accountId = user.platforms.google.accountId;
 
+        console.log('review COntroller Account ID: ', accountId)
+
         const locationId = user.platforms.google.locationId;
+
+
+        console.log('review COntroller location ID: ', locationId)
 
         if (!accountId || !locationId) {
             return res.status(400).json({ message: "Business location not found. Please reconnect Google." });
