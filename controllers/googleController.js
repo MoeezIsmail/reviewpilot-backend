@@ -105,7 +105,6 @@ const googleConnectCallback = async (req, res) => {
             googleEmail: profile.email,
         });
 
-        console.log('Google Business connected!');
         const redirectPage = savedState.from || 'connect-platforms';
         res.redirect(`${process.env?.FRONTEND_URL}/${redirectPage}?google=success`);
 

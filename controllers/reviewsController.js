@@ -32,10 +32,9 @@ const getValidAccessToken = async (user) => {
 
 // ─── Reviews Fetch ────────────────────────────────────────────
 const getReviewsData = async (req, res) => {
-    console.log('in Reviews data')
     try {
         const user = await User.findUserById(req.params.id);
-        console.log('User: ', user);
+
         if (!user) return res.status(404).json({ message: "User not found" });
 
         if (!user.platforms?.google?.accessToken) {

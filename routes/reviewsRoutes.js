@@ -51,7 +51,7 @@ const axios = require("axios");
 //         res.json({ error: err.response?.data || err.message });
 //     }
 // });
-router.get("/:id", verifyToken, getReviewsData)
+// router.get("/:id", verifyToken, getReviewsData)
 router.post("/:reviewId/auto-reply", verifyToken, getAiReply)
 router.post("/:reviewId/approve-reply", verifyToken, approveReply)
 
