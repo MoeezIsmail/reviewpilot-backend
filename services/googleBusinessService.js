@@ -13,8 +13,6 @@ const getAccounts = async (accessToken) => {
 
 const getLocations = async (accountId, accessToken) => {
     try {
-        console.log('account ID: ', accountId);
-
         const res = await axios.get(
             `https://mybusinessbusinessinformation.googleapis.com/v1/${accountId}/locations`,
             {
@@ -23,7 +21,7 @@ const getLocations = async (accountId, accessToken) => {
             }
         );
 
-        console.log('Service location: ', res.data);
+        console.log('--location: ', res.data);
 
         return res.data.locations || [];
     } catch (error) {
@@ -35,8 +33,6 @@ const getLocations = async (accountId, accessToken) => {
 const getReviews = async (accountId, locationId, accessToken, pageToken = null) => {
     const params = { pageSize: 10 };
     if (pageToken) params.pageToken = pageToken;
-
-    console.log('google business service ACCESS TOKEN: ', accessToken)
 
     const res = await axios.get(
         `https://mybusiness.googleapis.com/v4/${accountId}/${locationId}/reviews`,

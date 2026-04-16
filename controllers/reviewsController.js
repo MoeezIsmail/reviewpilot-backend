@@ -68,7 +68,7 @@ const getReviewsData = async (req, res) => {
 
     } catch (err) {
         console.error('getReviewsData error:', err.response?.data || err.message);
-        res.status(500).json({ message: "Failed to load reviews", error: err.message });
+        res.status(500).json({ message: "Failed to load reviews", error: err.message?.details });
     }
 };
 
