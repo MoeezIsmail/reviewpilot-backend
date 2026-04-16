@@ -191,6 +191,8 @@ const googleLoginCallback = async (req, res) => {
         const { access_token, refresh_token } = tokenData;
         const { id: googleId, email, name } = await fetchGoogleProfile(access_token);
 
+        console.log(googleId);
+
         let user = await User.findUserByGoogleId(googleId);
         let isNewUser = false;
 
