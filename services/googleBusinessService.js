@@ -34,6 +34,8 @@ const getReviews = async (accountId, locationId, accessToken, pageToken = null) 
     const params = { pageSize: 10 };
     if (pageToken) params.pageToken = pageToken;
 
+    console.log("In Google Business SERvice: PATH: ", `${REVIEWS_BASE_URL}/${accountId}/${locationId}`);
+
     const res = await axios.get(
         `https://mybusiness.googleapis.com/v4/${accountId}/${locationId}/reviews`,
         {
