@@ -65,6 +65,7 @@ const getReviewsData = async (req, res) => {
         res.json({ reviews, nextPageToken, accountId, locationId });
 
     } catch (err) {
+        console.error('getReviewsData error details:', err.response?.data || err.message.details);
         console.error('getReviewsData error:', err.response?.data || err.message);
         res.status(500).json({ message: "Failed to load reviews", error: err.message?.details });
     }
