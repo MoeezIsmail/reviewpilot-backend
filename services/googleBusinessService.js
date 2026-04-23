@@ -21,7 +21,7 @@ const getLocations = async (accountId, accessToken) => {
             }
         );
 
-        // console.log('--location: ', res.data);
+        console.log('--location: ', res.data);
 
         return res.data.locations || [];
     } catch (error) {
