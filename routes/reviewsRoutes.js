@@ -9,7 +9,7 @@ const axios = require("axios");
 
 router.get("/:id", verifyToken, getReviewsData)
 router.post("/:reviewId/ai-reply", verifyToken, getAiReply)
-router.post("/:reviewId/approve-reply", verifyToken, approveReply)
+router.post("/:reviewId/post-reply", verifyToken, approveReply)
 
 
 module.exports = router
