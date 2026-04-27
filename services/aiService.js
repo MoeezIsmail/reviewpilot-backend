@@ -25,13 +25,6 @@ Business context:
 - Name (optional): <Business Name>
 `;
 
-const userPrompt = `
-Customer review:
-"${reviewText}"
-
-Write a reply following the rules.
-`;
-
 const NEGATIVE_RULES = `
 Avoid:
 - Being defensive, rude, or blaming the customer
