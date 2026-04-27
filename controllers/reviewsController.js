@@ -90,7 +90,7 @@ const getAiReply = async (req, res) => {
 const approveReply = async (req, res) => {
     try {
         const { reviewId } = req.params;
-        const { reply, accountId, locationId } = req.body;
+        const { reply, rating, accountId, locationId } = req.body;
 
         if (!reply) return res.status(400).json({ message: "Reply is required" });
         if (!accountId || !locationId) return res.status(400).json({ message: "accountId and locationId required" });
@@ -102,7 +102,7 @@ const approveReply = async (req, res) => {
         // Sirf last part chahiye
         const reviewName = reviewId.split('/').pop();
 
-        await postReply(accountId, locationId, reviewName, reply, accessToken);
+        await postReply(accountId, locationId, reviewName, reply, rating, accessToken);
 
         res.json({ message: "Reply posted to Google Business Profile!" });
 

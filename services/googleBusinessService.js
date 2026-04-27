@@ -49,7 +49,7 @@ const getReviews = async (accountId, locationId, accessToken, pageToken = null) 
     };
 };
 
-const postReply = async (accountId, locationId, reviewId, replyText, accessToken) => {
+const postReply = async (accountId, locationId, reviewId, replyText, rating, accessToken) => {
     const res = await axios.put(
         `${REVIEWS_BASE_URL}/${accountId}/${locationId}/reviews/${reviewId}/reply`,
         { comment: replyText },
