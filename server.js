@@ -10,9 +10,6 @@ const authRoutes = require('./routes/authRoutes');
 const reviewRoutes = require('./routes/reviewsRoutes');
 const session = require('express-session');
 
-// const net = require('net');
-
-
 app.use(cors({
     origin: process.env?.FRONTEND_URL,
     credentials: true,
@@ -21,11 +18,6 @@ app.use(express.json());
 
 const PORT = process.env?.PORT || 5000;
 
-// app.use(session({
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-// }));
 
 app.use(session({
     secret: process.env?.SESSION_SECRET || "mysecret321",
@@ -60,11 +52,3 @@ async function startServer() {
 }
 
 startServer();
-
-// const client = net.connect(2525, 'smtp.gmail.com', () => {
-//     console.log('✅ Connection Successful to Gmail Port 465');
-//     client.end();
-// });
-// client.on('error', (err) => {
-//     console.error('❌ Connection Failed:', err);
-// });

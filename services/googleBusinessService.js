@@ -40,7 +40,6 @@ const getReviews = async (accountId, locationId, accessToken, pageToken = null) 
         `https://mybusiness.googleapis.com/v4/${accountId}/${locationId}/reviews`,
         {
             headers: { Authorization: `Bearer ${accessToken}` },
-            params,
         }
     );
 
